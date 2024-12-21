@@ -1,0 +1,27 @@
+{
+  "name": "chaosorganizdipserver",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000P\u0000o\u0000l\u0000l\u0000i\u0000n\u0000g\u0000S\u0000e\u0000r\u0000v\u0000e\u0000r\u0000\r\u0000 \u0000#\u0000 \u0000L\u0000o\u0000a\u0000d\u0000i\u0000n\u0000g\u0000S\u0000t\u0000y\u0000l\u0000i\u0000n\u0000g\u0000S\u0000e\u0000r\u0000v\u0000e\u0000r\u0000\r\u0000 \u0000",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/cors": "^5.0.0",
+    "@koa/multer": "^3.0.2",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "faker": "^5.5.3",
+    "koa": "^2.15.3",
+    "koa-bodyparser": "^4.4.1",
+    "koa-router": "^13.0.1",
+    "pino": "^9.5.0",
+    "pino-pretty": "^13.0.0",
+    "rxjs": "^7.8.1",
+    "ws": "^8.18.0"
+  }
+}
