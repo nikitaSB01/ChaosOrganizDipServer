@@ -13,9 +13,37 @@ const router = new Router();
 app.use(cors());
 app.use(bodyParser());
 
-// Заглушки данных
-const messages = []; // Для хранения текстовых сообщений и ссылок
-const files = []; // Для хранения информации о загруженных файлах
+// Путь к файлу messages.json
+const messagesFilePath = path.join(__dirname, "messages/messages.json");
+console.log("Path to messages.json:", messagesFilePath);
+
+// Функция для чтения сообщений из файла
+function loadMessagesFromFile() {
+  console.log("Checking if file exists:", messagesFilePath); // Проверка пути
+  if (fs.existsSync(messagesFilePath)) {
+    console.log("File exists. Reading data..."); // Подтверждение существования файла
+    const data = fs.readFileSync(messagesFilePath, "utf-8");
+    console.log("Raw data from file:", data); // Вывод данных из файла
+    try {
+      return JSON.parse(data); // Попытка разобрать JSON
+    } catch (error) {
+      console.error("Error parsing JSON from file:", error); // Если JSON некорректен
+      return [];
+    }
+  }
+  console.log("File does not exist. Returning empty array."); // Если файла нет
+  return [];
+}
+
+// Функция для сохранения сообщений в файл
+function saveMessagesToFile(messages) {
+  console.log("Saving messages to file:", messages); // Отладка
+  fs.writeFileSync(messagesFilePath, JSON.stringify(messages, null, 2));
+}
+
+// Загружаем сообщения при старте сервера
+const messages = loadMessagesFromFile();
+console.log("Loaded messages at server start:", messages); // Проверка загруженных данных
 
 // Вебсокет-сервер
 const wss = new WebSocket.Server({ port: 3001 });
@@ -25,11 +53,22 @@ wss.on("connection", (ws) => {
 
   ws.on("message", (message) => {
     const parsedMessage = JSON.parse(message);
+    console.log("WebSocket received message:", parsedMessage);
 
-    // Рассылка сообщений всем подключённым клиентам
+    const newMessage = {
+      id: Date.now(),
+      type: parsedMessage.type,
+      content: parsedMessage.content,
+      isSelf: parsedMessage.isSelf || false, // Используем переданное значение
+      createdAt: new Date(),
+    };
+
+    messages.push(newMessage);
+    saveMessagesToFile(messages);
+
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(parsedMessage));
+        client.send(JSON.stringify(newMessage));
       }
     });
   });
@@ -61,7 +100,8 @@ router.post("/messages", (ctx) => {
     createdAt: new Date(),
   };
 
-  messages.push(newMessage);
+  messages.push(newMessage); // Добавляем сообщение в массив
+  saveMessagesToFile(messages); // Сохраняем массив сообщений в файл
 
   // Рассылка нового сообщения всем клиентам через WebSocket
   wss.clients.forEach((client) => {
@@ -77,11 +117,11 @@ router.post("/messages", (ctx) => {
 // Ленивая подгрузка сообщений
 router.get("/messages", (ctx) => {
   const { offset = 0, limit = 10 } = ctx.query;
+  console.log("GET /messages called with offset:", offset, "limit:", limit);
 
-  const paginatedMessages = messages
-    .slice(-limit - offset, -offset || undefined)
-    .reverse();
+  const paginatedMessages = messages.slice(offset, offset + limit); // Берём сообщения от старых к новым
 
+  console.log("Returning messages in correct order:", paginatedMessages);
   ctx.body = paginatedMessages;
 });
 
@@ -133,4 +173,10 @@ app.use(router.routes()).use(router.allowedMethods());
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+});
+
+router.get("/", (ctx) => {
+  ctx.body = {
+    message: "Welcome to Chaos Organizer API",
+  };
 });

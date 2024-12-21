@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1734785519957,
+    "type": "text",
+    "content": "1",
+    "isSelf": true,
+    "createdAt": "2024-12-21T12:51:59.957Z"
+  },
+  {
+    "id": 1734785520433,
+    "type": "text",
+    "content": "2",
+    "isSelf": true,
+    "createdAt": "2024-12-21T12:52:00.433Z"
+  },
+  {
+    "id": 1734785520878,
+    "type": "text",
+    "content": "3",
+    "isSelf": true,
+    "createdAt": "2024-12-21T12:52:00.878Z"
+  },
+  {
+    "id": 1734786115929,
+    "type": "text",
+    "content": "https://example.com",
+    "isSelf": true,
+    "createdAt": "2024-12-21T13:01:55.929Z"
+  },
+  {
+    "id": 1734786127835,
+    "type": "text",
+    "content": "https://example.com",
+    "isSelf": true,
+    "createdAt": "2024-12-21T13:02:07.835Z"
+  }
+]
