@@ -1,37 +1,62 @@
 [
   {
-    "id": 1734785519957,
+    "id": 1735051955129,
+    "type": "file",
+    "content": "http://localhost:3000/uploads/6ee85d5fb25c95adea912f630c8518ad",
+    "originalname": "New1.png",
+    "mimetype": "image/png",
+    "createdAt": "2024-12-24T14:52:35.129Z"
+  },
+  {
+    "id": 1735052113871,
+    "type": "file",
+    "content": "http://localhost:3000/uploads/36ee23efa7c0d4d31c4d04c7c9030556",
+    "originalname": "ÐÐµÐ·ÑÐ¼ÑÐ½Ð½ÑÐ¹......png",
+    "mimetype": "image/png",
+    "createdAt": "2024-12-24T14:55:13.871Z"
+  },
+  {
+    "id": 1735052195086,
+    "type": "file",
+    "content": "http://localhost:3000/uploads/4045b3bc04b1e55aa538c7628b70ff85",
+    "originalname": "6758.jpg",
+    "mimetype": "image/jpeg",
+    "createdAt": "2024-12-24T14:56:35.086Z"
+  },
+  {
+    "id": 1735052296774,
     "type": "text",
     "content": "1",
     "isSelf": true,
-    "createdAt": "2024-12-21T12:51:59.957Z"
+    "createdAt": "2024-12-24T14:58:16.774Z"
   },
   {
-    "id": 1734785520433,
+    "id": 1735052297987,
     "type": "text",
     "content": "2",
     "isSelf": true,
-    "createdAt": "2024-12-21T12:52:00.433Z"
+    "createdAt": "2024-12-24T14:58:17.987Z"
   },
   {
-    "id": 1734785520878,
+    "id": 1735052299026,
     "type": "text",
     "content": "3",
     "isSelf": true,
-    "createdAt": "2024-12-21T12:52:00.878Z"
+    "createdAt": "2024-12-24T14:58:19.026Z"
   },
   {
-    "id": 1734786115929,
-    "type": "text",
-    "content": "https://example.com",
-    "isSelf": true,
-    "createdAt": "2024-12-21T13:01:55.929Z"
+    "id": 1735052310854,
+    "type": "file",
+    "content": "http://localhost:3000/uploads/93cbaa787c899afdad8cbc4bc9cc9f23",
+    "originalname": "6Hq9mg4qw8s5md7GoGEG5u4P6lj1qORUUS2lg-pAWW8PpfQXthOsQr_1A1peqzAC15i5nPmI.jpg",
+    "mimetype": "image/jpeg",
+    "createdAt": "2024-12-24T14:58:30.854Z"
   },
   {
-    "id": 1734786127835,
+    "id": 1735052325715,
     "type": "text",
-    "content": "https://example.com",
+    "content": "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
     "isSelf": true,
-    "createdAt": "2024-12-21T13:02:07.835Z"
+    "createdAt": "2024-12-24T14:58:45.715Z"
   }
 ]

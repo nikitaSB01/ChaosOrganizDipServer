@@ -6,12 +6,23 @@ const multer = require("@koa/multer");
 const fs = require("fs");
 const path = require("path");
 const WebSocket = require("ws");
-
 const app = new Koa();
 const router = new Router();
 
-app.use(cors());
-app.use(bodyParser());
+app.use(
+  cors({
+    origin: "*", // Разрешить все источники
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Разрешённые методы
+    allowHeaders: ["Content-Type", "Authorization", "Accept"], // Разрешённые заголовки
+  })
+);
+
+// Путь к папке uploads
+const uploadsPath = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath); // Создаём папку, если её нет
+}
+console.log("Static files served from:", uploadsPath);
 
 // Путь к файлу messages.json
 const messagesFilePath = path.join(__dirname, "messages/messages.json");
@@ -19,19 +30,17 @@ console.log("Path to messages.json:", messagesFilePath);
 
 // Функция для чтения сообщений из файла
 function loadMessagesFromFile() {
-  console.log("Checking if file exists:", messagesFilePath); // Проверка пути
   if (fs.existsSync(messagesFilePath)) {
-    console.log("File exists. Reading data..."); // Подтверждение существования файла
+    console.log("File exists. Reading data...");
     const data = fs.readFileSync(messagesFilePath, "utf-8");
-    console.log("Raw data from file:", data); // Вывод данных из файла
     try {
-      return JSON.parse(data); // Попытка разобрать JSON
+      return JSON.parse(data);
     } catch (error) {
-      console.error("Error parsing JSON from file:", error); // Если JSON некорректен
+      console.error("Error parsing JSON from file:", error);
       return [];
     }
   }
-  console.log("File does not exist. Returning empty array."); // Если файла нет
+  console.log("File does not exist. Returning empty array.");
   return [];
 }
 
@@ -43,7 +52,6 @@ function saveMessagesToFile(messages) {
 
 // Загружаем сообщения при старте сервера
 const messages = loadMessagesFromFile();
-console.log("Loaded messages at server start:", messages); // Проверка загруженных данных
 
 // Вебсокет-сервер
 const wss = new WebSocket.Server({ port: 3001 });
@@ -53,13 +61,11 @@ wss.on("connection", (ws) => {
 
   ws.on("message", (message) => {
     const parsedMessage = JSON.parse(message);
-    console.log("WebSocket received message:", parsedMessage);
-
     const newMessage = {
       id: Date.now(),
       type: parsedMessage.type,
       content: parsedMessage.content,
-      isSelf: parsedMessage.isSelf || false, // Используем переданное значение
+      isSelf: parsedMessage.isSelf || false,
       createdAt: new Date(),
     };
 
@@ -76,6 +82,20 @@ wss.on("connection", (ws) => {
   ws.on("close", () => {
     console.log("WebSocket: Client disconnected");
   });
+});
+
+// Маршрут для обработки файлов из папки uploads вручную
+router.get("/uploads/:filename", (ctx) => {
+  const { filename } = ctx.params;
+  const filePath = path.join(uploadsPath, filename);
+
+  if (fs.existsSync(filePath)) {
+    ctx.set("Content-Type", "application/octet-stream");
+    ctx.body = fs.createReadStream(filePath);
+  } else {
+    ctx.status = 404;
+    ctx.body = { error: "File not found" };
+  }
 });
 
 // Маршрут для проверки статуса сервера
@@ -95,7 +115,7 @@ router.post("/messages", (ctx) => {
 
   const newMessage = {
     id: Date.now(),
-    type, // text, link
+    type,
     content,
     createdAt: new Date(),
   };
@@ -117,11 +137,9 @@ router.post("/messages", (ctx) => {
 // Ленивая подгрузка сообщений
 router.get("/messages", (ctx) => {
   const { offset = 0, limit = 10 } = ctx.query;
-  console.log("GET /messages called with offset:", offset, "limit:", limit);
 
-  const paginatedMessages = messages.slice(offset, offset + limit); // Берём сообщения от старых к новым
+  const paginatedMessages = messages.slice(offset, offset + limit);
 
-  console.log("Returning messages in correct order:", paginatedMessages);
   ctx.body = paginatedMessages;
 });
 
@@ -137,34 +155,22 @@ router.post("/upload", upload.single("file"), (ctx) => {
     return;
   }
 
-  const newFile = {
+  console.log("Uploaded file path:", path.resolve(file.path)); // Отладка
+
+  const newMessage = {
     id: Date.now(),
-    filename: file.filename,
+    type: "file",
+    content: `http://localhost:3000/uploads/${file.filename}`,
     originalname: file.originalname,
     mimetype: file.mimetype,
-    path: file.path,
-    uploadedAt: new Date(),
+    createdAt: new Date(),
   };
 
-  files.push(newFile);
+  messages.push(newMessage);
+  saveMessagesToFile(messages);
+
   ctx.status = 201;
-  ctx.body = newFile;
-});
-
-// Скачивание файлов
-router.get("/download/:filename", (ctx) => {
-  const { filename } = ctx.params;
-  const file = files.find((f) => f.filename === filename);
-
-  if (!file) {
-    ctx.status = 404;
-    ctx.body = { error: "File not found" };
-    return;
-  }
-
-  ctx.set("Content-disposition", `attachment; filename=${file.originalname}`);
-  ctx.set("Content-type", file.mimetype);
-  ctx.body = fs.createReadStream(path.resolve(file.path));
+  ctx.body = newMessage;
 });
 
 // Подключение маршрутов
